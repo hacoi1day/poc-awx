@@ -1,0 +1,42 @@
+---
+- name: Simple Create VM on vCenter
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    vcenter_hostname: "{{ vcenter_hostname | default('vcenter.local') }}"
+    vcenter_username: "{{ vcenter_username | default('administrator@vsphere.local') }}"
+    vcenter_password: "{{ vcenter_password }}"
+    validate_certs: false
+
+  tasks:
+    - name: Create VM from template
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ validate_certs }}"
+
+        datacenter: "{{ datacenter }}"
+        cluster: "{{ cluster }}"
+        folder: "{{ folder }}"
+        name: "{{ vm_name }}"
+        template: "{{ template_name }}"
+        datastore: "{{ datastore }}"
+
+        state: poweredon
+
+        hardware:
+          memory_mb: "{{ memory_mb | default(2048) }}"
+          num_cpus: "{{ num_cpus | default(2) }}"
+
+        networks:
+          - name: "{{ network }}"
+            type: dhcp
+
+      register: result
+
+    - name: Show result
+      debug:
+        var: result.instance.ipv4
