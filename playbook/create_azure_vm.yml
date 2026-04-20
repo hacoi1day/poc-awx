@@ -20,3 +20,4 @@
           publisher: "{{ image_publisher }}"
           sku: "{{ image_sku }}"
           version: "{{ image_version }}"
+        managed_disk_type: Standard_LRS
