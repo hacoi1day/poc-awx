@@ -1,0 +1,33 @@
+---
+- name: Create EC2 Instance
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    aws_region: "{{ aws_region | default('ap-southeast-1') }}"
+
+  tasks:
+    - name: Launch EC2 instance
+      amazon.aws.ec2_instance:
+        name: "{{ instance_name }}"
+        key_name: "{{ key_name }}"
+        instance_type: "{{ instance_type }}"
+        image_id: "{{ ami_id }}"
+        region: "{{ aws_region }}"
+
+        vpc_subnet_id: "{{ subnet_id }}"
+        security_group: "{{ security_group }}"
+
+        count: "{{ instance_count | default(1) }}"
+        wait: true
+
+        tags:
+          Name: "{{ instance_name }}"
+          Environment: "{{ env | default('dev') }}"
+
+      register: ec2_output
+
+    - name: Show instance info
+      debug:
+        var: ec2_output.instances
