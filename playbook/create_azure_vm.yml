@@ -1,0 +1,22 @@
+- name: Create Azure VM (minimal)
+  hosts: localhost
+  connection: local
+
+  tasks:
+    - name: Create resource group
+      azure.azcollection.azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ location }}"
+
+    - name: Create VM
+      azure.azcollection.azure_rm_virtualmachine:
+        resource_group: "{{ resource_group }}"
+        name: "{{ vm_name }}"
+        vm_size: "{{ vm_size }}"
+        admin_username: "{{ admin_username }}"
+        admin_password: "{{ admin_password }}"
+        image:
+          offer: "{{ image_offer }}"
+          publisher: "{{ image_publisher }}"
+          sku: "{{ image_sku }}"
+          version: "{{ image_version }}"
